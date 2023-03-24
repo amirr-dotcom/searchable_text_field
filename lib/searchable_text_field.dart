@@ -18,6 +18,7 @@ class SearchableTextField<T> extends StatelessWidget {
     final theme=Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         TextFormField(
           controller: controller,
@@ -38,7 +39,10 @@ class SearchableTextField<T> extends StatelessWidget {
         ),
         AnimatedContainer(
             duration: const Duration(milliseconds: 500),
-            height:  showLoader==true? 40:(items??[]).isNotEmpty? 100:0,
+            constraints: BoxConstraints(
+              maxHeight: showLoader==true? 40:(items??[]).isNotEmpty? 100:0,
+              minHeight: 0
+            ),
             margin: EdgeInsets.only(
                 top: showLoader==true? 8:(items??[]).isNotEmpty? 8:0
             ),
@@ -56,6 +60,7 @@ class SearchableTextField<T> extends StatelessWidget {
                 ),
               )),
             ):ListView.builder(
+              shrinkWrap: true,
               itemCount: (items??[]).length,
               itemBuilder: (context,index){
                 SearchableItem<T> item=items![index];

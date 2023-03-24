@@ -1,5 +1,6 @@
 name: searchable_text_field
-description: A new Flutter package project.
+description: for searching dynamic data and selection.
+repository: https://github.com/amirr-dotcom/searchable_text_field
 version: 0.0.1
 homepage:
 
