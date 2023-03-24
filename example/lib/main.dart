@@ -76,6 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController controller=TextEditingController();
 
   City? selectedCity;
+  bool loading =false;
 
   @override
   Widget build(BuildContext context) {
@@ -98,9 +99,16 @@ class _MyHomePageState extends State<MyHomePage> {
           padding: const EdgeInsets.all(8.0),
           child:     SearchableTextField<City>(
             controller: controller,
-            // show loader true when you want to show load screen
-            showLoader: false,
-            hideMenu: selectedCity!=null,
+            // maintain status
+            status: selectedCity!=null?
+            SearchableTextFieldStatus.itemSelected :
+            loading?
+            SearchableTextFieldStatus.loading :
+            searchedCities.isEmpty?
+            SearchableTextFieldStatus.noItemFound :
+            searchedCities.isNotEmpty?
+            SearchableTextFieldStatus.itemFound :
+            SearchableTextFieldStatus.itemFound,
             menuOption: MenuOption(
             ),
             decoration: const InputDecoration(

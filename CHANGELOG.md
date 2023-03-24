@@ -9,4 +9,8 @@
 
 ## 1.0.1
 
-*  menu ui options added.
+* menu ui options added.
+
+## 1.0.2
+
+*  status maintenance added.

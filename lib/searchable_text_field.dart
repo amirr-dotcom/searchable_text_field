@@ -1,11 +1,12 @@
 library searchable_text_field;
 
 export 'src/menu_option.dart';
+export 'src/status.dart';
 
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:searchable_text_field/src/menu_option.dart';
+import 'package:searchable_text_field/searchable_text_field.dart';
 
 
 class SearchableTextField<T> extends StatelessWidget {
@@ -14,9 +15,9 @@ class SearchableTextField<T> extends StatelessWidget {
   final ValueChanged<T> onSelectedItem;
   final List<SearchableItem<T>>? items;
   final InputDecoration? decoration;
-  final bool showLoader;
-  final bool hideMenu;
+  final SearchableTextFieldStatus status;
   final Widget? loaderWidget;
+  final Widget? noItemWidget;
   final Duration debounceDuration;
   final TextEditingController controller;
   final MenuOption? menuOption;
@@ -27,10 +28,9 @@ class SearchableTextField<T> extends StatelessWidget {
     this.items,
     required this.onSelectedItem,
     this.decoration,
-    this.showLoader=false,
+    this.status=SearchableTextFieldStatus.none,
     required this.controller,
-    this.hideMenu=false,
-    this.debounceDuration= const Duration(milliseconds: 100), this.menuOption, this.loaderWidget
+    this.debounceDuration= const Duration(milliseconds: 100), this.menuOption, this.loaderWidget, this.noItemWidget
   }) : super(key: key);
 
   @override
@@ -38,7 +38,55 @@ class SearchableTextField<T> extends StatelessWidget {
     final debouncer=Debouncer(duration: debounceDuration);
     final theme=Theme.of(context);
 
-    bool openBottomSheet=showLoader==true || ((items??[]).isNotEmpty && !hideMenu);
+    bool openBottomSheet=(status==SearchableTextFieldStatus.itemFound ||
+        status==SearchableTextFieldStatus.noItemFound ||
+        status==SearchableTextFieldStatus.loading);
+
+
+    Widget loader=loaderWidget?? const Padding(
+      padding: EdgeInsets.all(10.0),
+      child: Center(
+        child: SizedBox(
+          height: 10,
+          width: 10,
+          child: CircularProgressIndicator(
+          ),
+        ),
+      ),
+    );
+    
+    
+    Widget itemsWidget=SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: List.generate((items??[]).length, (index) {
+          SearchableItem<T> item=items![index];
+          return InkWell(
+            onTap: (){
+              onSelectedItem(item.value);
+              controller.text=item.title;
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Align(
+                  alignment: menuOption?.alignment??Alignment.centerLeft,
+                  child: Text(item.title,
+                    textAlign: item.textAlign,
+                    style: item.style,)),
+            ),
+          );
+        }),
+      ),
+    );
+
+
+    Widget noItemFoundWidget=noItemWidget?? const Padding(
+      padding: EdgeInsets.all(10.0),
+      child: Center(child: Text("No Item Found ")),
+    );
+
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -75,48 +123,11 @@ class SearchableTextField<T> extends StatelessWidget {
                   color: theme.primaryColor
               ),
             ),
-            child:  showLoader==true?  (loaderWidget?? Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Padding(
-                    padding: EdgeInsets.all(2.0),
-                    child: SizedBox(
-                      height: 10,
-                      width: 10,
-                      child: CircularProgressIndicator(
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )):
-
-            SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: List.generate((items??[]).length, (index) {
-                  SearchableItem<T> item=items![index];
-                  return InkWell(
-                    onTap: (){
-                      onSelectedItem(item.value);
-                      controller.text=item.title;
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Align(
-                          alignment: menuOption?.alignment??Alignment.centerLeft,
-                          child: Text(item.title,
-                          textAlign: item.textAlign,
-                          style: item.style,)),
-                    ),
-                  );
-                }),
-              ),
-            ))
+            child:  status==SearchableTextFieldStatus.loading?  loader:
+            status==SearchableTextFieldStatus.itemFound? itemsWidget :
+            status==SearchableTextFieldStatus.noItemFound? noItemFoundWidget :
+            status==SearchableTextFieldStatus.itemSelected? itemsWidget :
+            Container())
       ],
     );
   }
