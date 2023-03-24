@@ -96,10 +96,13 @@ class _MyHomePageState extends State<MyHomePage> {
         // in the middle of the parent.
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: SearchableTextField<City>(
+          child:     SearchableTextField<City>(
             controller: controller,
-            // make show loader true when you want to show load screen
+            // show loader true when you want to show load screen
             showLoader: false,
+            hideMenu: selectedCity!=null,
+            menuOption: MenuOption(
+            ),
             decoration: const InputDecoration(
               hintText: "Search City Here",
             ),
@@ -107,6 +110,8 @@ class _MyHomePageState extends State<MyHomePage> {
               if(val!=null){
                 // you get the text change here
                 // search or change data according to your need
+
+                selectedCity=null;
                 searchedCities.clear();
                 searchedCities.addAll(cites
                     .where((element) =>
@@ -119,7 +124,6 @@ class _MyHomePageState extends State<MyHomePage> {
             onSelectedItem: (City city){
               // you will get selected city here
               selectedCity=city;
-              searchedCities=[];
               setState(() {
 
               });
@@ -138,7 +142,10 @@ class _MyHomePageState extends State<MyHomePage> {
             items: searchedCities.map((e) =>
                 SearchableItem<City>(
                     value: e,
-                    title: (e.city??""))
+                    title: (e.city??""),
+                style: const TextStyle(
+                  color: Colors.blue
+                ),)
             ).toList(),
           ),
         ),
