@@ -1,7 +1,7 @@
 name: searchable_text_field
 description: for searching dynamic data and selection.
 repository: https://github.com/amirr-dotcom/searchable_text_field
-version: 1.0.2
+version: 1.0.3
 homepage:
 
 environment:

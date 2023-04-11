@@ -30,7 +30,7 @@ class SearchableTextField<T> extends StatelessWidget {
     this.decoration,
     this.status=SearchableTextFieldStatus.none,
     required this.controller,
-    this.debounceDuration= const Duration(milliseconds: 100), this.menuOption, this.loaderWidget, this.noItemWidget
+    this.debounceDuration= const Duration(milliseconds: 500), this.menuOption, this.loaderWidget, this.noItemWidget
   }) : super(key: key);
 
   @override
@@ -103,7 +103,9 @@ class SearchableTextField<T> extends StatelessWidget {
           },
           onChanged: (String val){
             debouncer.run(() {
-              onChanged!(val);
+              if(onChanged!=null){
+                onChanged!(val);
+              }
             });
           },
           decoration: decoration,

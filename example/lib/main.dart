@@ -100,7 +100,9 @@ class _MyHomePageState extends State<MyHomePage> {
           child:     SearchableTextField<City>(
             controller: controller,
             // maintain status
-            status: selectedCity!=null?
+            status: controller.text.trim().isEmpty?
+            SearchableTextFieldStatus.none :
+            selectedCity!=null?
             SearchableTextFieldStatus.itemSelected :
             loading?
             SearchableTextFieldStatus.loading :
@@ -108,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
             SearchableTextFieldStatus.noItemFound :
             searchedCities.isNotEmpty?
             SearchableTextFieldStatus.itemFound :
-            SearchableTextFieldStatus.itemFound,
+            SearchableTextFieldStatus.none,
             menuOption: MenuOption(
             ),
             decoration: const InputDecoration(

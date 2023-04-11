@@ -13,4 +13,8 @@
 
 ## 1.0.2
 
-*  status maintenance added.
+* status maintenance added.
+
+## 1.0.3
+
+*  null check operator issue fixed.
